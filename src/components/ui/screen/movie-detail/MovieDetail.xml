@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="MovieDetail" extends="ContentNode">
+    <interface>
+        <field id="backgroundUri" type="string" />
+        <field id="releaseYear" type="string" />
+        <field id="runtime" type="integer" />
+        <field id="directorName" type="string" />
+        <field id="genres" type="array" />
+        <field id="overview" type="string" />
+        <field id="actors" type="array" />
+    </interface>
+</component>

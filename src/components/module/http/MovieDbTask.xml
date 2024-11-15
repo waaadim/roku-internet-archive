@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MovieDbTask" extends="Task">
+    <interface>
+        <field id="BASE_URL" type="string" value="https://api.themoviedb.org/3/" />
+        <field id="API_KEY" type="string" value="274f828ad283bd634ef4fc1ee4af255f" />
+        <field id="request" type="assocarray" />
+        <field id="result" type="node" />
+        <function name="successCallback" />
+    </interface>
+</component>

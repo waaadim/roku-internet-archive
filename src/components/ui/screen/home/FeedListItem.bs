@@ -1,0 +1,40 @@
+import "pkg:/components/enhancement/observables.bs"
+
+sub init()
+  m.title = m.top.FindNode("title")
+  m.releaseDate = m.top.FindNode("releaseDate")
+  m.thumbnail = m.top.FindNode("thumbnail")
+  m.focusBorder = m.top.FindNode("focusBorder")
+
+  setLayout()
+  observables.init([
+    {
+      root: m.top
+      callbacks: {
+        itemContent: itemContentChanged
+        itemHasFocus: focusChanged
+        focusPercent: focusChanged
+      }
+    }
+  ])
+end sub
+
+sub setLayout()
+  m.title.font.size = 20
+  m.releaseDate.font.size = 16
+end sub
+
+sub itemContentChanged()
+  itemData = m.top.itemContent
+  m.title.text = itemData.title
+  m.releaseDate.text = itemData.releaseDate
+  m.thumbnail.uri = itemData.thumbnail
+end sub
+
+sub focusChanged()
+  if m.top.focusPercent > 0
+    m.focusBorder.opacity = m.top.focusPercent
+  else
+    m.focusBorder.opacity = 0
+  end if
+end sub

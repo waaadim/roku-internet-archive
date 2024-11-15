@@ -1,0 +1,14 @@
+{
+    "$schema": "node_modules/brighterscript/bsconfig.schema.json",
+    "rootDir": "src",
+    "plugins": [
+        "rooibos-roku"
+    ],
+    "rooibos": {
+        "isRecordingCodeCoverage": false,
+        "printTestTimes": true,
+        "testsFilePattern": null,
+        "showOnlyFailures": true,
+        "catchCrashes": false
+    }
+}

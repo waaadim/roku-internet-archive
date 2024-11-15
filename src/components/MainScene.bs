@@ -1,0 +1,45 @@
+import "pkg:/components/enhancement/observables.bs"
+import "pkg:/components/module/eventbus/eventbus.bs"
+import "pkg:/components/module/singletons/singletons.bs"
+
+sub init()
+  ' waiting here for main & eventBus to be ready
+  ' m.top.ObserveField("launchArgs", "launchArgsChanged")
+  observables.init([
+    {
+      root: m.top
+      callbacks: {
+        launchArgs: launchArgsChanged
+      }
+    }
+  ])
+end sub
+
+sub launchArgsChanged(msg)
+  ' launchArgs = msg.GetData()
+
+  m.navigation = singletons.loadOrCreate({ componentName: "Navigation" })
+  m.navigation@.setup({
+    scene: _.getScene()
+  })
+
+  ' TODO: Features/Screens should be able to update the navigation map
+  m.navigation.navMap = {
+    "SCENE_LOADED": {
+      screenId: "HomeScreen"
+      screenFields: {}
+      "HOME_ITEM_SELECTED": {
+        "DETAIL_SCREEN": {}
+      }
+    }
+  }
+
+  eventbus.enqueue({
+    name: "SCENE_LOADED"
+  })
+end sub
+
+function onKeyEvent(key as string, press as boolean) as boolean
+  _.log.debug(`Scene.onKeyEvent ${key} ${press}`)
+  return false
+end function

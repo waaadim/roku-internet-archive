@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="HomeScreen" extends="ListPanel">
+    <children>
+        <HomeFeedList id="feedList" translation="[0,100]" />
+    </children>
+</component>

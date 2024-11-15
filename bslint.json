@@ -1,0 +1,26 @@
+{
+  "ignores": [
+    "components/roku_modules/**/*",
+    "source/roku_modules/**/*"
+  ],
+  "rules": {
+    "inline-if-style": "then",
+    "block-if-style": "no-then",
+    "condition-style": "no-group",
+    "named-function-style": "auto",
+    "anon-function-style": "auto",
+    "aa-comma-style": "never",
+    "no-print": "warn",
+    "no-todo": "off",
+    "todo-pattern": "TODO|FIXME",
+    "no-stop": "warn",
+    "type-annotations": "off",
+    "assign-all-paths": "error",
+    "unsafe-path-loop": "error",
+    "unsafe-iterators": "error",
+    "unreachable-code": "warn",
+    "case-sensitivity": "warn",
+    "unused-variable": "warn",
+    "consistent-return": "error"
+  }
+}

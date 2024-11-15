@@ -1,0 +1,62 @@
+import "pkg:/components/ui/data2nodes/data2nodes.bs"
+import "pkg:/components/module/eventbus/eventbus.bs"
+import "pkg:/components/module/singletons/singletons.bs"
+
+sub init()
+  m.top.baseUrl = "https://archive.org/services/search/beta/page_production/"
+  ' eventbus.subscribe(eventbusHandler)
+end sub
+
+sub eventbusHandler(msg as object)
+  ' event = msg.GetData()
+end sub
+
+function fetchMovieCollections(aa = {})
+  eventbus.enqueue({
+    name: "FETCH_IA_MOVIE_COLLECTIONS"
+    kind: eventbus.HTTP_REQUEST
+    url: m.top.baseUrl
+    params: {
+      user_query: ""
+      page_type: "collection_details"
+      page_target: "movies"
+      hits_per_page: "10"
+      page: "1"
+    }
+  })
+  return ""
+end function
+
+' {
+'   "index": "prod-n-001",
+'   "service_backend": "metadata",
+'   "hit_type": "item",
+'   "fields": {
+'       "identifier": "social-media-video",
+'       "title": "Social Media Videos",
+'       "description": "Social Media Videos",
+'       "collection": [
+'           "additional_collections_video",
+'           "movies"
+'       ],
+'       "mediatype": "collection",
+'       "num_favorites": 405,
+'       "item_size": 73308,
+'       "files_count": 8,
+'       "item_count": 760261,
+'       "collection_files_count": 37746611,
+'       "collection_size": 2450316229432392,
+'       "downloads": 223121367,
+'       "week": 1055944,
+'       "month": 4502391,
+'       "indexflag": [
+'           "index",
+'           "nonoindex",
+'           "collections"
+'       ],
+'       "addeddate": "2020-10-24T23:22:40Z",
+'       "publicdate": "2020-10-24T23:22:40Z"
+'   },
+'   "highlight": null,
+'   "_score": null
+' },

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="Navigation" extends="Node">
+  <interface>
+    <field id="navMap" type="assocArray" />
+    <field id="port" type="node" />
+    <field id="screenContainer" type="node" />
+
+    <function name="setup" />
+    <!-- <function name="add" /> -->
+  </interface>
+</component>

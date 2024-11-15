@@ -1,0 +1,183 @@
+import "pkg:/source/roku_modules/rodash/rodash.brs"
+
+namespace _
+  ' Invokes sub after wait milliseconds. Any additional arguments are provided to subwhen it's invoked.
+  ' @since 0.0.22
+  ' @category Function
+  ' @param {Sub} callback - The sub to be called after a set delay
+  ' @param {Float} [wait] - The number of milliseconds to delay invocation
+  ' @param {Dynamic} [context] - a single item of data to be passed into the callback when invoked
+  sub delay(callback as function, wait = 0 as float, context = invalid as dynamic)
+    rodash.delay(callback, wait, context)
+  end sub
+
+  ' @param {Dynamic} value
+  function get(value)
+    return value
+  end function
+
+  function toString(value) as string
+    ' if rodash_isString(value) then
+    '   return value
+    ' end if
+    ' if rodash_isNumber(value) then
+    '   return rodash_internal_numberToString(value)
+    ' end if
+    ' if rodash_isNode(value) then
+    '   return rodash_nodeToString(value)
+    ' end if
+    ' if rodash_isBoolean(value) then
+    '   return rodash_internal_booleanToString(value)
+    ' end if
+    ' if rodash_isAA(value) then
+    '   return rodash_internal_aaToString(value)
+    ' end if
+    ' if rodash_isArray(value) then
+    '   return rodash_internal_arrayToString(value)
+    ' end if
+    if _.is.func(value)
+      ' remove the `Function: ` prefix
+      return value.ToStr().Mid(10)
+    else if _.is.string(value)
+      return value
+    else
+      return ""
+    end if
+  end function
+
+  ' @param {roArray|roSgNode|roAssociativeArray} iterable
+  ' @param {Function} callback (value, key/index, iterable) -> value
+  ' @param {Dynamic} [context]
+  ' @return {roArray}
+  function map(aa)
+    result = []
+    if GetInterface(aa.it, "ifAssociativeArray") = invalid ' assume it's an array
+      aa.it.Reset()
+      index = 0
+      while aa.it.isNext()
+        if aa.context = invalid
+          r = aa.callback(aa.it.Next(), index, aa.it)
+        else
+          r = aa.callback(aa.it.Next(), index, aa.it, aa.context)
+        end if
+        if r <> invalid
+          result.push(r)
+        end if
+        index += 1
+      end while
+    else
+      keys = aa.it.Keys()
+      keys.Reset()
+      while keys.isNext()
+        key = keys.Next()
+        if aa.context = invalid
+          r = aa.callback(aa.it.LookupCI(key), key, aa.it)
+        else
+          r = aa.callback(aa.it.LookupCI(key), key, aa.it, aa.context)
+        end if
+        if r <> invalid
+          result.push(r)
+        end if
+      end while
+    end if
+
+    return result
+  end function
+
+  function getScene()
+    if m.top = invalid
+      globalAA = getGlobalAA()
+      return globalAA.global.GetScene()
+    else
+      return m.top.GetScene()
+    end if
+  end function
+
+  namespace is
+    function string(value)
+      valueType = type(value)
+      return valueType = "String" or valueType = "roString"
+    end function
+
+    function func(value)
+      valueType = Type(value)
+      return valueType = "roFunction" or valueType = "Function"
+    end function
+
+    function AA(value)
+      return Type(value) = "roAssociativeArray"
+    end function
+
+    function devChannel()
+      appInfo = CreateObject("roAppInfo")
+      return appInfo.IsDev()
+    end function
+  end namespace
+
+  namespace log
+    sub debug(v1)
+      ' bs:disable-next-line
+      print "[DEBUG] " v1
+    end sub
+
+    sub error(v1, v2 = invalid)
+      ' bs:disable-next-line
+      print "[ERROR] " v1 v2
+    end sub
+  end namespace
+
+  namespace nodes
+    function create(nodeType = "ContentNode") as roSGNode
+      return CreateObject("roSGNode", nodeType)
+    end function
+
+    ' @param {roSgNode} root - root node to search from. If not specified, the current node is used.
+    ' @param {roArray} ids - node ids to find. get all chidren if empty
+    function children(root, ids = invalid)
+      ' root = root ?? m.top
+      if ids = invalid
+        return root.GetChildren(-1, 0)
+      end if
+      return _.map({
+        it: ids
+        callback: function(v, k, it, context)
+          return context.FindNode(v)
+        end function
+        context: root
+      })
+    end function
+  end namespace
+
+  namespace globals
+    sub observeFieldScoped(key, callback)
+      _.globals._getGlobal().ObserveFieldScoped(key, callback)
+    end sub
+
+    sub unobserveFieldScoped(key)
+      _.globals._getGlobal().UnobserveFieldScoped(key)
+    end sub
+
+    sub addField(key, varType, alwaysNotify = true)
+      _.globals._getGlobal().AddField(key, varType, alwaysNotify)
+    end sub
+
+    sub addFields(aa)
+      _.globals._getGlobal().AddFields(aa)
+    end sub
+
+    sub set(key, value)
+      _.globals._getGlobal()[key] = value
+    end sub
+
+    function get(key) as dynamic
+      return _.globals._getGlobal()[key]
+    end function
+
+    function _getGlobal()
+      ' WARNING: m.global is not available in `main`
+      ' it has to be set explicitly
+      globalAA = GetGlobalAA()
+      return globalAA.global ?? m.global
+    end function
+  end namespace
+end namespace

@@ -1,0 +1,28 @@
+import "pkg:/components/module/http/HttpRequest.bs"
+
+sub getHomeFeed(onSuccess, page)
+    task = CreateObject("roSGNode", "HomeFeedTask")
+    task.ObserveField("result", onSuccess)
+    task.request = HttpRequest({
+        url: "movie/top_rated"
+        params: {
+            language: "en-US"
+            page: page
+        }
+    })
+    task.control = "RUN"
+end sub
+
+sub successCallback(response as object)
+    content = CreateObject("roSGNode", "ContentNode")
+    for each movie in response.body.results
+        item = content.CreateChild("MovieFeed")
+        item.SetFields({
+            id: movie.id
+            title: movie.title
+            thumbnail: `https://image.tmdb.org/t/p/w342/${movie.poster_path}`
+            releaseDate: movie.release_date
+        })
+    end for
+    m.top.result = content
+end sub

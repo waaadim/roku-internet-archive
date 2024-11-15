@@ -1,0 +1,26 @@
+import "pkg:/components/module/lodash/lodash.bs"
+import "pkg:/components/module/http/Http.bs"
+
+sub init()
+    m.top.functionName = "execute"
+end sub
+
+sub execute()
+    httpClient = Http()
+    httpClient.success(successCallback)
+    httpClient.error(sub(response)
+        _.log.error("Request failed", response)
+    end sub)
+
+    ' TODO: move to Interceptor
+    request = {}
+    request.Append(m.top.request)
+    request.baseUrl = m.top.BASE_URL
+    request.params["api_key"] = m.top.API_KEY
+
+    httpClient.send(request)
+end sub
+
+sub successCallback()
+    ' to be overwritten by consumers
+end sub

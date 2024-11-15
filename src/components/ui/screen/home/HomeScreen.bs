@@ -1,0 +1,85 @@
+import "pkg:/components/data/home-feed/HomeFeedTask.bs"
+import "pkg:/components/enhancement/observables.bs"
+import "pkg:/components/module/eventbus/eventbus.bs"
+import "pkg:/components/module/singletons/singletons.bs"
+
+sub init()
+  m.feedList = m.top.FindNode("feedList")
+  m.top.Update({
+    panelSize: "full"
+    leftPosition: 60
+    hasNextPanel: true
+    isFullScreen: true
+    selectButtonMovesPanelForward: true
+  })
+
+  eventbus.subscribe(eventbusHandler)
+  observables.init([
+    {
+      root: m.top
+      callbacks: {
+        focusedChild: focusChanged
+      }
+    },
+    {
+      root: m.feedList
+      callbacks: {
+        rowItemSelected: rowItemSelected
+        rowItemFocused: rowItemFocused
+      }
+    }
+  ])
+
+  setupFeedList()
+
+  m.internetArchiveService = singletons.loadOrCreate({ componentName: "InternetArchiveService" })
+  m.internetArchiveService@.fetchMovieCollections()
+end sub
+
+sub eventbusHandler(msg as object)
+  event = msg.getData()
+  if event.name = "FETCH_IA_MOVIE_COLLECTIONS" and event.kind = eventbus.HTTP_RESPONSE
+    m.internetArchiveService.movieCollections = event.response
+    content = CreateObject("roSGNode", "ContentNode")
+    content.AppendChild(event.response.Clone(true))
+    m.feedList.content = content
+  end if
+end sub
+
+sub setupFeedList()
+  content = CreateObject("roSGNode", "ContentNode")
+  row = content.CreateChild("ContentNode")
+  row.title = "Top Movies"
+  m.feedList.content = content
+  m.feedList.SetFocus(true)
+  m.topMoviesPage = 0
+  m.canLoadNextPage = true
+end sub
+
+sub updateHomeFeed(event)
+  m.feedList.content.GetChild(0).AppendChildren(event.Getdata().getChildren(20, 0))
+  ' m.canLoadNextPage = true
+end sub
+
+' there should be a better way to do this
+sub focusChanged()
+  if m.feedList.focusable then m.feedList.SetFocus(true)
+end sub
+
+sub rowItemSelected(event)
+  ' rowAndCol = event.Getdata()
+  ' selectedItem = m.feedList.content.GetChild(rowAndCol[0]).GetChild(rowAndCol[1])
+  ' Navigation().add("MovieDetailScreen", {
+  '   movieId: selectedItem.id
+  ' })
+end sub
+
+sub rowItemFocused(event)
+  rowAndCol = event.Getdata()
+  topMoviesRow = m.feedList.content.GetChild(rowAndCol[0])
+  if rowAndCol[1] + 10 > topMoviesRow.GetChildCount() and m.canLoadNextPage
+    ' m.canLoadNextPage = false
+    ' m.topMoviesPage += 1
+    ' getHomeFeed("updateHomeFeed", m.topMoviesPage)
+  end if
+end sub

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="MainScene" extends="Scene">
+  <interface>
+    <field id="launchArgs" type="assocarray" alwaysNotify="true" />
+    <field id="messagePort" type="node" alwaysNotify="true" />
+  </interface>
+</component>

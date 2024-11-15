@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MovieDetailScreen" extends="Panel" initialFocus="playButton">
+    <interface>
+        <field id="movieId" type="integer" onChange="movieIdChanged" />
+    </interface>
+
+    <children>
+        <Poster id="backgroundImg" width="1280" height="720" />
+        <Rectangle id="mask" width="1280" height="720" opacity="0.95" color="0x2e414b" />
+        <Group translation="[120,150]">
+            <LayoutGroup itemSpacings="[20]">
+                <Label id="title" font="font:LargeBoldSystemFont" />
+                <Label id="releaseYear" font="font:SmallestSystemFont" />
+                <Label id="directorName" font="font:SmallestSystemFont" />
+                <Label id="genres" font="font:SmallestSystemFont" />
+                <Label id="overview" numLines="2" wrap="true" width="600" font="font:SmallestSystemFont" />
+                <Button id="playButton" text="Play" maxWidth="120" />
+                <LayoutGroup id="actors" itemSpacings="[20]" layoutDirection="horiz" />
+            </LayoutGroup>
+        </Group>
+    </children>
+</component>

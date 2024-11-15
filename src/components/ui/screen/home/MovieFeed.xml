@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="MovieFeed" extends="ContentNode">
+    <interface>
+        <field id="releaseDate" type="string"/>
+        <field id="thumbnail" type="string"/>
+   </interface>
+</component>

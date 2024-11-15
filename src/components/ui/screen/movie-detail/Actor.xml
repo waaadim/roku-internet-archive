@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="Actor" extends="Group">
+    <interface>
+        <field id="posterUri" type="string" alias="poster.uri" />
+        <field id="name" type="string" alias="name.text" />
+        <field id="character" type="string" alias="character.text" />
+    </interface>
+
+    <children>
+        <LayoutGroup itemSpacings="[10]">
+            <Poster id="poster" loadDisplayMode="scaleToFill" width="100" height="110" />
+            <Label id="name" font="font:SmallestSystemFont" />
+            <Label id="character" font="font:SmallestSystemFont" />
+        </LayoutGroup>
+    </children>
+</component>

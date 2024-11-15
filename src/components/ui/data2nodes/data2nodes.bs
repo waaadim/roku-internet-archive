@@ -1,0 +1,35 @@
+namespace data2nodes
+  const movieCollections = "movieCollections"
+
+  sub init()
+    m.data2nodes = {}
+    m.data2nodes[movieCollections] = _movieCollections
+  end sub
+
+  function getConvertor(convertorName)
+    if convertorName = invalid then return invalid
+    return m.data2nodes[convertorName]
+  end function
+
+  function _movieCollections(aa)
+    items = _.map({
+      it: aa.response.body.hits.hits
+      callback: function(v, k, it)
+        node = _.nodes.create()
+        node.Update({
+          title: v.fields.title
+          releaseDate: v.fields.publicdate
+          thumbnail: _getAssetUrl(v.fields.identifier)
+        }, true)
+        return node
+      end function
+    })
+    root = _.nodes.create()
+    root.AppendChildren(items)
+    return root
+  end function
+
+  function _getAssetUrl(assetId)
+    return `https://archive.org/services/img/${assetId}`
+  end function
+end namespace

@@ -1,0 +1,31 @@
+{
+  "name": "roku-internet-archive",
+  "version": "0.1.0",
+  "description": "Browse & watch the Internet Archive",
+  "scripts": {
+    "build": "export $(xargs < .vscode/.env) && npx bsc --deploy true --host $ROKU_TARGET --password $ROKU_PASSWORD"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "promises": "npm:@rokucommunity/promises@0.4.0",
+    "rodash": "npm:@tkss/rodash@0.0.31",
+    "roku-requests": "1.2.0"
+  },
+  "ropm": {
+    "rootDir": "src",
+    "noprefix": [
+      "roku-requests"
+    ]
+  },
+  "devDependencies": {
+    "@rokucommunity/bslint": "v1.0.0-alpha.41",
+    "brighterscript": "1.0.0-alpha.41",
+    "brighterscript-formatter": "1.7.6",
+    "bsc-plugin-auto-findnode": "0.1.0",
+    "rooibos-roku": "v6.0.0-alpha.41",
+    "ropm": "0.10.26",
+    "ts-node": "10.9.2",
+    "typescript": "5.5.2",
+    "undent": "0.1.0"
+  }
+}

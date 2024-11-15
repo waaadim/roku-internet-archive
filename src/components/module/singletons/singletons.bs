@@ -1,0 +1,20 @@
+import "pkg:/components/module/lodash/lodash.bs"
+namespace singletons
+
+  ' Load or create a singleton Node and store it in Scene
+  ' @param [componentName] as string
+  ' @param [alias] as string
+  function loadOrCreate(args)
+    fieldName = args.alias ?? args.componentName
+    scene = _.getScene()
+    if scene.HasField(fieldName)
+      return scene[fieldName]
+    end if
+
+    component = CreateObject("roSGNode", args.componentName)
+    if component = invalid then return invalid
+    scene.AddField(fieldName, "node", false)
+    scene[fieldName] = component
+    return component
+  end function
+end namespace

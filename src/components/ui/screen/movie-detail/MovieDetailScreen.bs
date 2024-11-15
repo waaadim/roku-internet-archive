@@ -1,0 +1,55 @@
+import "pkg:/components/module/http/HttpRequest.bs"
+
+sub init()
+    setNodes()
+    setLayout()
+end sub
+
+sub setNodes()
+    m.backgroundImg = m.top.FindNode("backgroundImg")
+    m.title = m.top.FindNode("title")
+    m.releaseYear = m.top.FindNode("releaseYear")
+    m.runtime = m.top.FindNode("runtime")
+    m.directorName = m.top.FindNode("directorName")
+    m.genres = m.top.FindNode("genres")
+    m.overview = m.top.FindNode("overview")
+    m.actors = m.top.FindNode("actors")
+end sub
+
+sub setLayout()
+    m.top.panelSize = "full"
+    m.top.leftPosition = 0
+end sub
+
+sub movieIdChanged()
+    getMovieDetails()
+end sub
+
+sub getMovieDetails()
+    task = CreateObject("roSGNode", "MovieDetailTask")
+    task.ObserveField("result", "setContent")
+    task.request = HttpRequest({
+        url: `movie/${m.top.movieId}`
+        params: {
+            append_to_response: "credits"
+        }
+    })
+    task.control = "RUN"
+end sub
+
+sub setContent(event)
+    m.top.SetFocus(true)
+    md = event.Getdata()
+    m.backgroundImg.uri = md.backgroundUri
+    m.title.text = md.title
+    m.releaseYear.text = `${md.releaseYear} - ${md.runtime}m`
+    m.directorName.text = md.directorName
+    m.genres.text = md.genres.Join(", ")
+    m.overview.text = md.overview
+    for each a in md.actors
+        actor = m.actors.CreateChild("Actor")
+        actor.posterUri = a.posterUri
+        actor.name = a.name
+        actor.character = a.character
+    end for
+end sub

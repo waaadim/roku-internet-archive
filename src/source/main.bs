@@ -1,0 +1,67 @@
+import "pkg:/components/module/singletons/singletons.bs"
+import "pkg:/components/module/eventbus/eventbus.bs"
+import "pkg:/components/ui/data2nodes/data2nodes.bs"
+
+sub main(aa)
+  screen = CreateObject("roSGScreen")
+  port = CreateObject("roMessagePort")
+  screen.SetMessagePort(port)
+  scene = screen.CreateScene("MainScene")
+  screen.Show()
+  m.global = screen.GetGlobalNode()
+  m.global.id = "GLOBAL_NODE"
+  data2nodes.init()
+  eventbus.init(port)
+  scene.launchArgs = aa
+
+
+  waitTime = 100
+  while true
+    msg = Wait(waitTime, port)
+    msgType = Type(msg)
+    if msgType = "roSGNodeEvent"
+      fieldName = msg.GetField()
+      event = msg.GetData()
+      if fieldName = "eventbus_queue"
+        eventbus._enqueue(event)
+      else if fieldName = "eventbus_event"
+        eventbusHandler(event)
+      end if
+    else if msgType = "roSGScreenEvent"
+      if msg.IsScreenClosed() then return
+    end if
+
+    nextEvent = eventbus._getNextEvent()
+    if nextEvent = invalid
+      waitTime = 0
+    else
+      eventbus._fireNextEvent(nextEvent)
+      waitTime = 100
+    end if
+
+  end while
+end sub
+
+sub eventbusHandler(event)
+  if event.kind = eventbus.HTTP_REQUEST
+    method = event.method ?? "GET"
+    url = event.url ?? ""
+    requestArgs = {
+      timeout: 15000
+      ' other supported args
+      ' https://github.com/rokucommunity/roku-requests/blob/master/src/source/Requests.brs#L80
+    }
+    requestArgs.Append(event)
+    httpResponse = Requests().request(method, url, requestArgs)
+
+    responseEvent = {}
+    responseEvent.Append(event)
+    responseEvent.kind = eventbus.HTTP_RESPONSE
+    if event.name = "FETCH_IA_MOVIE_COLLECTIONS"
+      responseEvent.response = data2nodes._movieCollections(httpResponse.json)
+    else
+      responseEvent.response = httpResponse.json
+    end if
+    eventbus.enqueue(responseEvent)
+  end if
+end sub

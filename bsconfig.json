@@ -1,0 +1,32 @@
+{
+    "$schema": "node_modules/brighterscript/bsconfig.schema.json",
+    "rootDir": "src",
+    "stagingDir": "build",
+    "files": [
+        "**/*",
+        "manifest"
+    ],
+    "retainStagingDir": true,
+    "autoImportComponentScript": true,
+    "sourceMap": false,
+    "require": [
+        "ts-node/register"
+    ],
+    "plugins": [
+        // Does not work in alpha versions of BrighterScript
+        // "./bs-plugins/bsc-plugin-auto-findnode/src/index.ts",
+        "@rokucommunity/bslint",
+        "./bs-plugins/tracer.ts"
+    ],
+    "diagnosticFilters": [
+        "components/roku_modules/**/*",
+        "source/roku_modules/**/*"
+    ],
+    "tracer": {
+        "ignorePaths": [
+            "roku_modules",
+            "/lodash/",
+            "bslib"
+        ]
+    }
+}

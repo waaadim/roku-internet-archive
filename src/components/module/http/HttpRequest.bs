@@ -1,0 +1,12 @@
+function HttpRequest(args)
+    this = {
+        method: "GET"
+        baseUrl: ""
+        url: ""
+        headers: {}
+        params: {}
+        data: {}
+    }
+    this.Append(args)
+    return this
+end function

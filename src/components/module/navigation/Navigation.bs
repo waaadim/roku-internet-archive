@@ -1,0 +1,28 @@
+import "pkg:/components/module/eventbus/eventbus.bs"
+import "pkg:/components/module/singletons/singletons.bs"
+
+sub init()
+  eventbus.subscribe(eventbusHandler)
+end sub
+
+sub setup(args = invalid)
+  panelSet = args.scene.CreateChild("PanelSet")
+  panelSet.translation = [0, 0]
+  m.top.screenContainer = panelSet
+end sub
+
+sub eventbusHandler(msg)
+  event = msg.GetData()
+  ' to support both String and Functions
+  navMapNode = m.top.navMap[_.toString(event.name)]
+  if navMapNode <> invalid
+    _add(navMapNode)
+  end if
+end sub
+
+sub _add(args = invalid)
+  s = m.top.screenContainer.CreateChild(args.screenId)
+  if s <> invalid and args.screenFields <> invalid
+    s.Update(args.screenFields)
+  end if
+end sub

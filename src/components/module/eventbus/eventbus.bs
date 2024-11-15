@@ -1,0 +1,44 @@
+import "pkg:/components/module/lodash/lodash.bs"
+
+namespace eventbus
+  const HTTP_REQUEST = "HTTP_REQUEST"
+  const HTTP_RESPONSE = "HTTP_RESPONSE"
+
+  sub init(port)
+    m.eventbus_queue = []
+    ' TODO: We might want to use an array
+    _.globals.addField("eventbus_queue", "assocarray", true)
+    _.globals.addField("eventbus_event", "assocarray", true)
+    _.globals.observeFieldScoped("eventbus_event", port)
+    _.globals.observeFieldScoped("eventbus_queue", port)
+  end sub
+
+  sub enqueue(e = {} as object)
+    _.log.debug(e)
+    _.globals.set("eventbus_queue", e)
+  end sub
+
+  sub subscribe(callback)
+    cb = callback
+    if _.is.func(callback)
+      cb = _.toString(callback)
+    end if
+    _.globals.ObserveFieldScoped("eventbus_event", cb)
+  end sub
+
+  sub unsubscribe()
+    _.globals.UnobserveFieldScoped("eventbus_event")
+  end sub
+
+  sub _enqueue(event)
+    m.eventbus_queue.Push(event)
+  end sub
+
+  function _getNextEvent()
+    return m.eventbus_queue.Pop()
+  end function
+
+  sub _fireNextEvent(event)
+    _.globals.set("eventbus_event", event)
+  end sub
+end namespace

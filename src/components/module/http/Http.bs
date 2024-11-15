@@ -1,0 +1,112 @@
+
+'Server requests must be created and sent from background Task node.
+'Assumes all response bodies are JSON
+function Http() as object
+  this = {
+    successHandlers: []
+    errorHandlers: []
+    interceptors: []
+    request: invalid
+    response: {}
+  }
+
+  ' handler(response as Dynamic)
+  this.success = sub(handler)
+    m.successHandlers.push(handler)
+  end sub
+
+  ' handler(response as Dynamic)
+  this.error = sub(handler)
+    m.errorHandlers.push(handler)
+  end sub
+
+  this.send = sub(request as object)
+    port = CreateObject("roMessagePort")
+    _Http_applyInterceptors(m.interceptors, request)
+    if _Http_execute(request, port)
+      event = wait(0, port)
+      m.handleUrlEvent(event)
+    else
+      print `Http failed: ${request.url}`
+    end if
+  end sub
+
+  this.handleUrlEvent = sub(urlEvent as object)
+    m.response.code = urlEvent.GetResponseCode()
+    m.response.contentType = urlEvent.GetResponseHeaders()["Content-Type"]
+
+    if m.response.contentType = invalid
+      m.response.body = urlEvent.GetString()
+    else if LCase(m.response.contentType).instr(CONTENT_TYPE_JSON()) >= 0
+      m.response.body = ParseJSON(urlEvent.GetString())
+    end if
+
+    if m.response.code >= 200 and m.response.code < 300
+      for each handler in m.successHandlers
+        handler(m.response)
+      end for
+    else
+      m.response.failureReason = urlEvent.GetFailureReason()
+      for each handler in m.errorHandlers
+        handler(m.response)
+      end for
+    end if
+  end sub
+
+  return this
+end function
+
+function _Http_execute(request as object, port as object) as boolean
+  m.urlTransfer = CreateObject("roUrlTransfer")
+  m.urlTransfer.SetMessagePort(port)
+  m.urlTransfer.SetUrl(_Http_buildUrl(request))
+  m.urlTransfer.SetRequest(request.method)
+  m.urlTransfer.RetainBodyOnError(true)
+  m.urlTransfer.SetCertificatesFile("common:/certs/ca-bundle.crt")
+  m.urlTransfer.SetHeaders(request.headers)
+
+  body = ""
+  requested = false
+  if request.method = "GET"
+    requested = m.urlTransfer.asyncGetToString()
+  else if request.method = "POST" or request.method = "DELETE" or request.method = "PUT"
+    if request.headers["Content-Type"] = CONTENT_TYPE_FORM_URLENCODED()
+      body = _Http_encodeData(request.data)
+    else if request.headers["Content-Type"] = CONTENT_TYPE_JSON()
+      body = FormatJSON(request.data)
+    end if
+    requested = m.urlTransfer.asyncPostFromString(body)
+  else if request.method = "HEAD"
+    requested = m.urlTransfer.asyncHead()
+  end if
+  return requested
+end function
+
+sub _Http_applyInterceptors(interceptors, request)
+  for each interceptor in interceptors
+    interceptor.interceptRequest(request)
+  end for
+end sub
+
+function _Http_buildUrl(request as object) as string
+  params = []
+  for each key in request.params
+    value = request.params[key].ToStr()
+    params.Push(`${key}=${value}`)
+  end for
+  return `${request.baseUrl}${request.url}?${params.Join("&")}`
+end function
+
+function _Http_encodeData(data as object) as string
+  encodedData = []
+  for each key in data
+    if data[key] <> invalid
+      encodedData.Push(key + "=" + data[key].encodeUriComponent())
+    end if
+  end for
+
+  return encodedData.Join("&")
+end function
+
+function CONTENT_TYPE_FORM_URLENCODED(): return "application/x-www-form-urlencoded": end function
+function CONTENT_TYPE_JSON(): return "application/json": end function

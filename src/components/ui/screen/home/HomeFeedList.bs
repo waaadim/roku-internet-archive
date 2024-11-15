@@ -1,0 +1,21 @@
+sub init()
+    setLayout()
+end sub
+
+sub setLayout()
+    itemW = 300
+    itemH = 320
+    m.top.Update({
+        itemComponentName: "FeedListItem"
+        rowFocusAnimationStyle: "floatingFocus"
+        rowLabelColor: "0xfffffe"
+        itemSize: [itemW * 3 + itemW / 2 + 150, itemH]
+        rowHeights: [itemH]
+        rowItemSize: [[itemW, itemH]]
+        rowItemSpacing: [30, 0]
+        rowLabelOffset: [0, 50]
+        showRowLabel: true
+        drawFocusFeedback: false
+    })
+    m.top.rowLabelFont.size = 26
+end sub

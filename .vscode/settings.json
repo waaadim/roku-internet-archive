@@ -1,0 +1,19 @@
+{
+  "cSpell.words": [
+    "axonista",
+    "bsconfig",
+    "bslib",
+    "bslint",
+    "findnode",
+    "findnodes",
+    "noprefix",
+    "rodash",
+    "rokucommunity",
+    "rooibos",
+    "ropm",
+    "tkss",
+    "undent",
+    "Unobserve"
+  ],
+  "brightscript.bsdk": "node_modules/brighterscript"
+}

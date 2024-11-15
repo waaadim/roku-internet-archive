@@ -1,0 +1,65 @@
+sub successCallback(response as object)
+  md = CreateObject("roSGNode", "MovieDetail")
+  data = response.body
+  md.SetFields({
+    id: data.id
+    backgroundUri: `https://image.tmdb.org/t/p/w1280/${data.backdrop_path}`
+    title: data.title
+    releaseYear: data.release_date.Left(4)
+    runtime: data.runtime
+    overview: data.overview
+    genres: Arr_map(data.genres, function(g)
+      return g.name
+    end function)
+    directorName: _getDirectorName(data.credits.crew)
+    actors: _getActors(data.credits.cast)
+  })
+  m.top.result = md
+end sub
+
+function _getDirectorName(cast as object)
+  director = Arr_filter(cast, function(c)
+    return c.job = "Director"
+  end function).Peek()
+
+  if director <> invalid then return director.name
+  return "Unknown"
+end function
+
+function _getActors(cast as object)
+  allActors = Arr_filter(cast, function(c)
+    return c.known_for_department = "Acting"
+  end function)
+  actors = []
+  for i = 0 to 3
+    actor = allActors[i]
+    if actor <> invalid
+      actors.Push(actor)
+      actor.posterUri = `https://image.tmdb.org/t/p/w154/${actor.profile_path}`
+    end if
+  end for
+  return actors
+end function
+
+function Arr_map(array, handler) as dynamic
+  map = []
+  for each element in array
+    result = handler(element)
+    if result <> invalid
+      map.push(result)
+    end if
+  end for
+
+  return map
+end function
+
+function Arr_filter(array, handler) as dynamic
+  filtered = []
+  for each element in array
+    if handler(element)
+      filtered.push(element)
+    end if
+  end for
+
+  return filtered
+end function

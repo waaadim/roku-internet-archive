@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component name="InternetArchiveService" extends="Node">
+  <interface>
+    <field id="baseUrl" type="string" />
+
+    <field id="categories" type="node" />
+    <field id="movieCollections" type="node" />
+
+    <function name="fetchMovieCollections" />
+  </interface>
+</component>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="MovieDetailTask" extends="MovieDbTask">
+    <interface>
+        <field id="movieId" type="integer" />
+    </interface>
+</component>
