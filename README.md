@@ -1,3 +1,11 @@
+# INSTALLATION
+Run:
+```
+npm install
+npm run build # builds the project
+npm run test # runs the rooibos tests
+```
+
 # FEATURES
 - Search the InternetArchives
 - Donations

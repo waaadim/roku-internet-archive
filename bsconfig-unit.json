@@ -1,6 +1,16 @@
 {
     "$schema": "node_modules/brighterscript/bsconfig.schema.json",
+    "extends": "bsconfig.json",
     "rootDir": "src",
+    "files": [
+        "**/*",
+        "manifest",
+        "!components/**/*.spec.bs",
+        {
+            "src": "components/**/*.spec.bs",
+            "dest": "source/tests"
+        }
+    ],
     "plugins": [
         "rooibos-roku"
     ],

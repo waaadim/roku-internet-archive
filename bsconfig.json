@@ -4,7 +4,9 @@
     "stagingDir": "build",
     "files": [
         "**/*",
-        "manifest"
+        "manifest",
+        // Exclude unit tests
+        "!**/*.spec.bs"
     ],
     "retainStagingDir": true,
     "autoImportComponentScript": true,

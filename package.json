@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Browse & watch the Internet Archive",
   "scripts": {
+    "test": "export $(xargs < .vscode/.env) && npx bsc --project bsconfig-unit.json --deploy true --host $ROKU_TARGET --password $ROKU_PASSWORD",
     "build": "export $(xargs < .vscode/.env) && npx bsc --deploy true --host $ROKU_TARGET --password $ROKU_PASSWORD"
   },
   "license": "UNLICENSED",

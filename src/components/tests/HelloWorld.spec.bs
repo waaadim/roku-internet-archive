@@ -1,0 +1,11 @@
+namespace tests
+  @suite
+  class HelloWorldTests extends tests.BaseTestSuite
+
+    @describe("Some func")
+    @it("tests that it works")
+    sub _()
+      m.assertEqual("He", "He")
+    end sub
+  end class
+end namespace
